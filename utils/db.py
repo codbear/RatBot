@@ -25,10 +25,9 @@ def init_db():
                 '''
                 CREATE TABLE IF NOT EXISTS voyages (
                     id SERIAL PRIMARY KEY,
-                    guildro VARCHAR(100) NOT NULL,
                     gold INTEGER NOT NULL,
-                    members INTEGER[] NOT NULL,
-                    author INTEGER NOT NULL,
+                    members BIGINT[] NOT NULL,
+                    author BIGINT NOT NULL,
                     timestamp TIMESTAMP NOT NULL,
                     season VARCHAR(100) NOT NULL
                 )
