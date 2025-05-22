@@ -27,6 +27,7 @@ def init_db():
                     id SERIAL PRIMARY KEY,
                     gold INTEGER NOT NULL,
                     emissary_value INTEGER NOT NULL,
+                    duration INTEGER NOT NULL,
                     members BIGINT[] NOT NULL,
                     author BIGINT NOT NULL,
                     timestamp TIMESTAMP NOT NULL,
@@ -47,13 +48,14 @@ def insert_voyage(voyage: dict) -> int:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    INSERT INTO voyages (gold, emissary_value, members, author, timestamp, season)
-                    VALUES (%s, %s, %s, %s, %s, %s)
+                    INSERT INTO voyages (gold, emissary_value, duration, members, author, timestamp, season)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
                     RETURNING id
                     """,
                     (
                         voyage['gold'],
                         voyage['emissary_value'],
+                        voyage['duration'],
                         voyage['members'],
                         voyage['author'],
                         voyage['timestamp'],
@@ -94,14 +96,14 @@ def delete_voyage(season_name: str, voyage_id: int) -> bool:
         conn.close()
 
 # Mise à jour d'un voyage
-def update_voyage(season_name: str, voyage_id: int, gold: int, emissary_value: int) -> bool:
+def update_voyage(season_name: str, voyage_id: int, gold: int, emissary_value: int, duration: int) -> bool:
     conn = get_connection()
     try:
         with conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    "UPDATE voyages SET gold = %s, emissary_value = %s WHERE season = %s AND id = %s",
-                    (gold, emissary_value, season_name, voyage_id)
+                    "UPDATE voyages SET gold = %s, emissary_value = %s, duration = %s WHERE season = %s AND id = %s",
+                    (gold, emissary_value, duration, season_name, voyage_id)
                 )
                 return cur.rowcount > 0
     finally:

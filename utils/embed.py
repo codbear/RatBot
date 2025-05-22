@@ -39,4 +39,10 @@ async def post_voyage_embed(
         inline=False
     )
 
+    embed.add_field(
+        name="Jours en mer", 
+        value=f"{voyage.get('duration'):,}".replace(',', ' ') + " jours",
+        inline=False
+    )
+
     await interaction.channel.send(embed=embed)
