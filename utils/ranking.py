@@ -13,7 +13,7 @@ def calculate_total_gold(season):
 
     for voyage in voyages:
         for uid in voyage['members']:
-            gold[uid] += voyage.get('gold', voyage.get('or', 0))
+            gold[uid] += voyage.get('emissary_value', 0)
 
     return dict(sorted(gold.items(), key=lambda x: x[1], reverse=True))
 
@@ -26,7 +26,7 @@ def format_ranking(guild, gold_data, season, title=None):
     for idx, (uid, amount) in enumerate(gold_data.items(), start=1):
         user = guild.get_member(uid)
         name = user.display_name if user else f"<@{uid}>"
-        lines.append(f"{idx}. {name}: {format_number(amount)} pièces d'or")
+        lines.append(f"{idx}. {name}: {format_number(amount)} valeur d'émissaire")
 
     return "\n".join(lines)
 

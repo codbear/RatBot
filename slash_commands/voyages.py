@@ -12,6 +12,7 @@ from utils.ranking import update_ranking
 @app_commands.command(name="ajouter_voyage", description="Déclarer un voyage de guilde")
 @app_commands.describe(
     gold="Montant d'or gagné pendant le voyage",
+    emissaire="Valeur d'émissaire de guilde gagnée pendant le voyage",
     membre1="Premier membre de l'équipage (facultatif)",
     membre2="Deuxième membre de l'équipage (facultatif)",
     membre3="Troisième membre de l'équipage (facultatif)"
@@ -19,6 +20,7 @@ from utils.ranking import update_ranking
 async def add_voyage(
     interaction: discord.Interaction,
     gold: int,
+    emissaire: int,
     membre1: discord.Member = None,
     membre2: discord.Member = None,
     membre3: discord.Member = None
@@ -28,6 +30,7 @@ async def add_voyage(
 
     voyage = {
         'gold': gold,
+        'emissary_value': emissaire,
         'members': members_ids,
         'author': interaction.user.id,
         'timestamp': interaction.created_at.isoformat(),
@@ -92,14 +95,15 @@ print("📌 Commande /supprimer_voyage chargée depuis voyages.py")
 @app_commands.command(name="modifier_voyage", description="Modifier le montant d'or d'un voyage.")
 @app_commands.describe(
     voyage_id="ID du voyage à modifier",
-    gold="Nouveau montant d'or gagné"
+    gold="Nouveau montant d'or gagné",
+    emissaire="Nouvelle valeur d'émissaire de guilde gagnée"
 )
-async def edit_voyage(interaction: discord.Interaction, voyage_id: int, gold: int):
+async def edit_voyage(interaction: discord.Interaction, voyage_id: int, gold: int, emissaire: int):
     if not is_admin(interaction):
         return await send_ephemeral_message(interaction, "❌ Seul un chef de guilde peut modifier un voyage.")
 
     season = interaction.channel.name
-    updated = update_voyage(season, voyage_id, gold)
+    updated = update_voyage(season, voyage_id, gold, emissaire)
     if not updated:
         return await send_ephemeral_message(
             interaction,
@@ -108,7 +112,7 @@ async def edit_voyage(interaction: discord.Interaction, voyage_id: int, gold: in
 
     await send_ephemeral_message(
         interaction,
-        f"✏️ Voyage n°{voyage_id} mis à jour à {format_number(gold)} pièces d'or."
+        f"✏️ Voyage n°{voyage_id} mis à jour à {format_number(gold)} pièces d'or et {format_number(emissaire)} en valeur d'émissaire."
     )
     # Mise à jour du classement
     await update_ranking(interaction)

@@ -33,4 +33,10 @@ async def post_voyage_embed(
         inline=False
     )
 
+    embed.add_field(
+        name="Valeur d'émissaire", 
+        value=f"{voyage.get('emissary_value'):,}".replace(',', ' '), 
+        inline=False
+    )
+
     await interaction.channel.send(embed=embed)
