@@ -13,7 +13,6 @@ GUILDE_ID = int(os.getenv('GUILDE_ID'))
 init_db()
 
 # ----- IMPORT COMMANDES -----
-import slash_commands.close_season  # noqa: F401
 import slash_commands.voyages  # noqa: F401
 import slash_commands.ranking  # noqa: F401
 
