@@ -1,0 +1,50 @@
+import os
+import discord
+from utils.format_number import format_number
+
+
+def calculate_total_gold(season, voyages=None):
+    from collections import defaultdict
+
+    if voyages is None:
+        from utils.storage import voyages
+
+    gold = defaultdict(int)
+
+    for voyage in voyages:
+        if voyage.get('season') == season:
+            for uid in voyage['members']:
+                gold[uid] += voyage.get('gold', voyage.get('or', 0))
+
+    return dict(sorted(gold.items(), key=lambda x: x[1], reverse=True))
+
+def format_ranking(guild, gold_data, season, title=None):
+    if not title:
+        title = f"# 🏆 Classement des Rats du Large - {season} #"
+
+    lines = [title]
+
+    for idx, (uid, amount) in enumerate(gold_data.items(), start=1):
+        user = guild.get_member(uid)
+        name = user.display_name if user else f"<@{uid}>"
+        lines.append(f"{idx}. {name}: {format_number(amount)} pièces d'or")
+
+    return "\n".join(lines)
+
+async def update_ranking(interaction: discord.Interaction):
+    season = interaction.channel.name
+    season = interaction.channel.name
+    gold_data = calculate_total_gold(season)
+    message = format_ranking(interaction.guild, gold_data, season)
+
+    ranking_channel = interaction.guild.get_thread(int(os.getenv('RANKING_CHANNEL_ID')))
+
+    if ranking_channel:
+        async for msg in ranking_channel.history(limit=50):
+            if msg.author == interaction.client.user:
+                await msg.edit(content=message)
+                break
+        else:
+            await ranking_channel.send(message)
+    else:
+        await interaction.channel.send(message)
