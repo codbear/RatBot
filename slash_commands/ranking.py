@@ -1,10 +1,9 @@
 # commands/ranking.py
 import discord
-from discord import app_commands
 from core.bot import tree
+from utils.db import fetch_voyages
 from utils.send import send_ephemeral_message
-from utils.storage import voyages
-from utils.ranking import calculate_total_gold, format_ranking, update_ranking
+from utils.ranking import calculate_total_gold, update_ranking
 
 @tree.command(name="classement", description="Affiche ta position dans le classement actuel de la saison")
 async def classement(interaction: discord.Interaction):
@@ -28,6 +27,7 @@ print("📌 Commande /classement chargée depuis ranking.py.")
 @tree.command(name="inactifs", description="Afficher la liste des membres inactifs lors de la saison")
 async def classement(interaction: discord.Interaction):
     season = interaction.channel.name
+    voyages = fetch_voyages(season)
     gold_data = calculate_total_gold(season)
 
     if not gold_data:

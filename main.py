@@ -3,11 +3,14 @@ import discord
 import os
 from dotenv import load_dotenv
 from core.bot import bot, tree
+from utils.db import init_db
 
 # ----- CONFIGURATION -----
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILDE_ID = int(os.getenv('GUILDE_ID'))
+
+init_db()
 
 # ----- IMPORT COMMANDES -----
 import slash_commands.close_season  # noqa: F401

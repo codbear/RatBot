@@ -1,20 +1,19 @@
 import os
 import discord
+from utils.db import fetch_voyages
 from utils.format_number import format_number
 
 
-def calculate_total_gold(season, voyages=None):
+def calculate_total_gold(season):
     from collections import defaultdict
 
-    if voyages is None:
-        from utils.storage import voyages
+    voyages = fetch_voyages(season)
 
     gold = defaultdict(int)
 
     for voyage in voyages:
-        if voyage.get('season') == season:
-            for uid in voyage['members']:
-                gold[uid] += voyage.get('gold', voyage.get('or', 0))
+        for uid in voyage['members']:
+            gold[uid] += voyage.get('gold', voyage.get('or', 0))
 
     return dict(sorted(gold.items(), key=lambda x: x[1], reverse=True))
 
@@ -32,7 +31,6 @@ def format_ranking(guild, gold_data, season, title=None):
     return "\n".join(lines)
 
 async def update_ranking(interaction: discord.Interaction):
-    season = interaction.channel.name
     season = interaction.channel.name
     gold_data = calculate_total_gold(season)
     message = format_ranking(interaction.guild, gold_data, season)
