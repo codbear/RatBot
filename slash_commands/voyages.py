@@ -27,17 +27,14 @@ async def add_voyage(
     membre2: discord.Member = None,
     membre3: discord.Member = None
 ):
-    season = interaction.channel.name
-    members_ids = [interaction.user.id] + [m.id for m in (membre1, membre2, membre3) if m]
-
     voyage = {
         'gold': gold,
         'emissary_value': emissaire,
         'duration': duree,
-        'members': members_ids,
+        'members': list(set([interaction.user.id] + [m.id for m in (membre1, membre2, membre3) if m])),
         'author': interaction.user.id,
         'timestamp': interaction.created_at.isoformat(),
-        'season': season
+        'season': interaction.channel.name
     }
 
     # Enregistrement en DB
