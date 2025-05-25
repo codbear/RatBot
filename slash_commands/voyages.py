@@ -12,7 +12,7 @@ from utils.ranking import update_ranking
 voyageCmd = app_commands.Group(name="voyage", description="Commandes liées aux voyages de guilde")
 
 @voyageCmd.command(name="ajouter", description="Déclarer un voyage de guilde")
-@voyageCmd.describe(
+@app_commands.describe(
     gold="Montant d'or gagné pendant le voyage",
     emissaire="Valeur d'émissaire de guilde gagnée pendant le voyage",
     duree="Durée du voyage en jours",
@@ -63,7 +63,7 @@ async def add_voyage(
         )
 
 @voyageCmd.command(name="supprimer", description="Supprimer un voyage par ID pour la saison en cours")
-@voyageCmd.describe(voyage_id="ID du voyage à supprimer")
+@app_commands.describe(voyage_id="ID du voyage à supprimer")
 async def remove_voyage(interaction: discord.Interaction, voyage_id: int):
     if not is_admin(interaction):
         return await send_ephemeral_message(interaction, "❌ Seul un chef de guilde peut supprimer un voyage.")
@@ -85,7 +85,7 @@ async def remove_voyage(interaction: discord.Interaction, voyage_id: int):
     await update_ranking(interaction)
 
 @voyageCmd.command(name="modifier", description="Modifier le montant d'or d'un voyage.")
-@voyageCmd.describe(
+@app_commands.describe(
     voyage_id="ID du voyage à modifier",
     gold="Nouveau montant d'or gagné",
     emissaire="Nouvelle valeur d'émissaire de guilde gagnée",
