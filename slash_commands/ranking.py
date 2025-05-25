@@ -5,7 +5,7 @@ from utils.db import fetch_voyages
 from utils.send import send_ephemeral_message
 from utils.ranking import calculate_ranking, update_ranking
 
-rankingCmd = discord.app_commands.Group(name="Classement", description="Commandes liées au classement des Rats du Large")
+rankingCmd = discord.app_commands.Group(name="classement", description="Commandes liées au classement des Rats du Large")
 
 @rankingCmd.command(name="personnel", description="Affiche ta position dans le classement actuel de la saison")
 async def rankingSelf(interaction: discord.Interaction):
