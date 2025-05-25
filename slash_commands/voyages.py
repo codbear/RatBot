@@ -9,7 +9,9 @@ from utils.send import send_ephemeral_message
 from utils.db import insert_voyage, delete_voyage, update_voyage
 from utils.ranking import update_ranking
 
-@app_commands.command(name="ajouter_voyage", description="Déclarer un voyage de guilde")
+voyageCmd = app_commands.Group(name="voyage", description="Commandes liées aux voyages de guilde")
+
+@voyageCmd.command(name="ajouter", description="Déclarer un voyage de guilde")
 @app_commands.describe(
     gold="Montant d'or gagné pendant le voyage",
     emissaire="Valeur d'émissaire de guilde gagnée pendant le voyage",
@@ -27,17 +29,14 @@ async def add_voyage(
     membre2: discord.Member = None,
     membre3: discord.Member = None
 ):
-    season = interaction.channel.name
-    members_ids = [interaction.user.id] + [m.id for m in (membre1, membre2, membre3) if m]
-
     voyage = {
         'gold': gold,
         'emissary_value': emissaire,
         'duration': duree,
-        'members': members_ids,
+        'members': list(set([interaction.user.id] + [m.id for m in (membre1, membre2, membre3) if m])),
         'author': interaction.user.id,
         'timestamp': interaction.created_at.isoformat(),
-        'season': season
+        'season': interaction.channel.name
     }
 
     # Enregistrement en DB
@@ -63,12 +62,7 @@ async def add_voyage(
             f"✅ Voyage n°{new_id} enregistré. Erreur lors de la mise à jour du classement."
         )
 
-# Enregistrement de la commande
-tree.add_command(add_voyage)
-print("📌 Commande /add_voyage chargée depuis voyages.py")
-
-
-@app_commands.command(name="supprimer_voyage", description="Supprimer un voyage par ID pour la saison en cours")
+@voyageCmd.command(name="supprimer", description="Supprimer un voyage par ID pour la saison en cours")
 @app_commands.describe(voyage_id="ID du voyage à supprimer")
 async def remove_voyage(interaction: discord.Interaction, voyage_id: int):
     if not is_admin(interaction):
@@ -90,12 +84,7 @@ async def remove_voyage(interaction: discord.Interaction, voyage_id: int):
     # Mise à jour du classement
     await update_ranking(interaction)
 
-# Enregistrement suppression
-tree.add_command(remove_voyage)
-print("📌 Commande /supprimer_voyage chargée depuis voyages.py")
-
-
-@app_commands.command(name="modifier_voyage", description="Modifier le montant d'or d'un voyage.")
+@voyageCmd.command(name="modifier", description="Modifier le montant d'or d'un voyage.")
 @app_commands.describe(
     voyage_id="ID du voyage à modifier",
     gold="Nouveau montant d'or gagné",
@@ -121,6 +110,4 @@ async def edit_voyage(interaction: discord.Interaction, voyage_id: int, gold: in
     # Mise à jour du classement
     await update_ranking(interaction)
 
-# Enregistrement modification
-tree.add_command(edit_voyage)
-print("📌 Commande /modifier_voyage chargée depuis voyages.py")
+tree.add_command(voyageCmd)

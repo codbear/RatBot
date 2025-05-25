@@ -1,1 +1,4 @@
 /.env
+/utils/__pycache__
+/slash_commands/__pycache__
+/core/__pycache__
