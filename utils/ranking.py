@@ -35,7 +35,7 @@ async def update_ranking(interaction: discord.Interaction):
     gold_data = calculate_total_gold(season)
     message = format_ranking(interaction.guild, gold_data, season)
 
-    ranking_channel = interaction.guild.get_thread(int(os.getenv('RANKING_CHANNEL_ID')))
+    ranking_channel = interaction.guild.get_thread(int(os.getenv('RANKING_CHANNEL_ID'))) or interaction.guild.get_channel(int(os.getenv('RANKING_CHANNEL_ID')))
 
     if ranking_channel:
         async for msg in ranking_channel.history(limit=50):
