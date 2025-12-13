@@ -28,10 +28,10 @@ def format_ranking(guild, ranking, season, title=None):
     
     # Emojis pour les positions
     position_emojis = {
-        1: "🏅",
-        2: "🥇",  
-        3: "🥈",
-        4: "🥉",
+        1: "🥇",
+        2: "🥈",
+        3: "🥉",
+        4: "🏅",
     }
     
     # Afficher tous les pirates sans limitation
