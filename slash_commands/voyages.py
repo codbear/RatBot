@@ -135,7 +135,7 @@ async def edit_voyage(
         'gold': gold,
         'emissary_value': emissaire,
         'duration': duree,
-        'members': list(set([voyage['author'], membre1.id, membre2.id, membre3.id]))
+        'members': list(set([voyage['author']] + [m.id for m in (membre1, membre2, membre3) if m]))
     })
     if not updated:
         return await send_ephemeral_message(
