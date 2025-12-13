@@ -14,6 +14,12 @@ async def post_voyage_embed(
         value=str(voyage.get('id')), 
         inline=False
     )
+
+    embed.add_field(
+        name="Saison", 
+        value=voyage.get('season', 'Saison inconnue'), 
+        inline=False
+    )
     
     embed.add_field(
         name="Équipage", 
