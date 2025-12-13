@@ -5,14 +5,20 @@ async def post_voyage_embed(
         interaction:discord.Interaction
 ):
     embed = discord.Embed(
-        title=f"📜 Rapport du voyage {voyage.get('id')}",
+        title=f"📜 Rapport du voyage n° {voyage.get('id')}",
         color=discord.Color.gold()
     )
 
     embed.add_field(
         name="Saison", 
         value=voyage.get('season', 'Saison inconnue'), 
-        inline=False
+        inline=True
+    )
+
+    embed.add_field(
+        name="Jours en mer", 
+        value=f"{voyage.get('duration'):,}".replace(',', ' ') + " jours",
+        inline=True
     )
     
     embed.add_field(
@@ -31,12 +37,6 @@ async def post_voyage_embed(
         name="Valeur d'émissaire", 
         value=f"{voyage.get('emissary_value'):,}".replace(',', ' '), 
         inline=True
-    )
-
-    embed.add_field(
-        name="Jours en mer", 
-        value=f"{voyage.get('duration'):,}".replace(',', ' ') + " jours",
-        inline=False
     )
 
     await interaction.channel.send(embed=embed)
