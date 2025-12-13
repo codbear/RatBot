@@ -14,16 +14,10 @@ async def post_voyage_embed(
         value=str(voyage.get('id')), 
         inline=False
     )
-
-    embed.add_field(
-        name="Capitaine", 
-        value=interaction.user.display_name, 
-        inline=False
-    )
     
     embed.add_field(
         name="Équipage", 
-        value=', '.join(f"<@{uid}>" for uid in voyage.get('members') if uid != interaction.user.id) or "aucun",
+        value=', '.join(f"<@{uid}>" for uid in voyage.get('members')) or "aucun",
         inline=False
     )
 
