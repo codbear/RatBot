@@ -5,14 +5,8 @@ async def post_voyage_embed(
         interaction:discord.Interaction
 ):
     embed = discord.Embed(
-        title="📜 Rapport de voyage",
+        title=f"📜 Rapport du voyage {voyage.get('id')}",
         color=discord.Color.gold()
-    )
-
-    embed.add_field(
-        name="Numéro de voyage", 
-        value=str(voyage.get('id')), 
-        inline=False
     )
 
     embed.add_field(
