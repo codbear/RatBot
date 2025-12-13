@@ -22,7 +22,7 @@ def format_ranking(guild, ranking, season, title=None):
     Formate le classement avec un style plus attrayant
     """
     if not title:
-        title = f"🏆 **CLASSEMENT DES RATS DU LARGE** 🏆\n🏴‍☠️ Saison: **{season}** 🏴‍☠️"
+        title = f"# 🏆 CLASSEMENT DES RATS DU LARGE - {season} 🏆 #"
 
     lines = [title, ""]  # Ligne vide après le titre
     
