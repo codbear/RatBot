@@ -6,7 +6,7 @@ from utils.format_number import format_number
 from utils.check_role import is_admin
 from utils.embed import post_voyage_embed
 from utils.send import send_ephemeral_message
-from utils.db import insert_voyage, delete_voyage, update_voyage
+from utils.db import get_voyage, insert_voyage, delete_voyage, update_voyage, get_active_season
 from utils.ranking import update_ranking
 
 voyageCmd = app_commands.Group(name="voyage", description="Commandes liées aux voyages de guilde")
@@ -29,6 +29,14 @@ async def add_voyage(
     membre2: discord.Member = None,
     membre3: discord.Member = None
 ):
+    # Vérifier qu'une saison est active
+    active_season = get_active_season()
+    if not active_season:
+        return await send_ephemeral_message(
+            interaction, 
+            "❌ Aucune saison n'est active. Un chef de guilde doit démarrer une saison avec `/saison demarrer`."
+        )
+
     voyage = {
         'gold': gold,
         'emissary_value': emissaire,
@@ -36,7 +44,7 @@ async def add_voyage(
         'members': list(set([interaction.user.id] + [m.id for m in (membre1, membre2, membre3) if m])),
         'author': interaction.user.id,
         'timestamp': interaction.created_at.isoformat(),
-        'season': interaction.channel.name
+        'season': active_season['name']
     }
 
     # Enregistrement en DB
@@ -68,13 +76,21 @@ async def remove_voyage(interaction: discord.Interaction, voyage_id: int):
     if not is_admin(interaction):
         return await send_ephemeral_message(interaction, "❌ Seul un chef de guilde peut supprimer un voyage.")
 
+    # Vérifier qu'une saison est active
+    active_season = get_active_season()
+    if not active_season:
+        return await send_ephemeral_message(
+            interaction, 
+            "❌ Aucune saison n'est active. Impossible de supprimer un voyage."
+        )
+
     # Suppression en DB
-    season = interaction.channel.name
-    deleted = delete_voyage(season, voyage_id)
+    season_name = active_season['name']
+    deleted = delete_voyage(season_name, voyage_id)
     if not deleted:
         return await send_ephemeral_message(
             interaction,
-            f"❌ Le voyage n°{voyage_id} n'existe pas."
+            f"❌ Le voyage n°{voyage_id} n'existe pas dans la saison en cours."
         )
 
     await send_ephemeral_message(
@@ -87,25 +103,49 @@ async def remove_voyage(interaction: discord.Interaction, voyage_id: int):
 @voyageCmd.command(name="modifier", description="Modifier le montant d'or d'un voyage.")
 @app_commands.describe(
     voyage_id="ID du voyage à modifier",
-    gold="Nouveau montant d'or gagné",
-    emissaire="Nouvelle valeur d'émissaire de guilde gagnée",
-    duree="Nouvelle durée du voyage en jours",
+    gold="Montant d'or gagné pendant le voyage",
+    emissaire="Valeur d'émissaire de guilde gagnée pendant le voyage",
+    duree="Durée du voyage en jours",
+    membre1="Premier membre de l'équipage (facultatif)",
+    membre2="Deuxième membre de l'équipage (facultatif)",
+    membre3="Troisième membre de l'équipage (facultatif)"
 )
-async def edit_voyage(interaction: discord.Interaction, voyage_id: int, gold: int, emissaire: int, duree: int):
+async def edit_voyage(
+    interaction: discord.Interaction,
+    voyage_id: int,
+    gold: int,
+    emissaire: int,
+    duree: int,
+    membre1: discord.Member = None,
+    membre2: discord.Member = None,
+    membre3: discord.Member = None
+):
     if not is_admin(interaction):
         return await send_ephemeral_message(interaction, "❌ Seul un chef de guilde peut modifier un voyage.")
 
-    season = interaction.channel.name
-    updated = update_voyage(season, voyage_id, gold, emissaire, duree)
-    if not updated:
+    voyage = get_voyage(voyage_id)
+    if not voyage:
         return await send_ephemeral_message(
             interaction,
             f"❌ Le voyage n°{voyage_id} n'existe pas."
         )
+    updated = update_voyage({
+        'season': voyage['season'],
+        'id': voyage_id,
+        'gold': gold,
+        'emissary_value': emissaire,
+        'duration': duree,
+        'members': list(set([voyage['author']] + [m.id for m in (membre1, membre2, membre3) if m]))
+    })
+    if not updated:
+        return await send_ephemeral_message(
+            interaction,
+            f"❌ Une erreur est survenue lors de la mise à jour du voyage n°{voyage_id}."
+        )
 
     await send_ephemeral_message(
         interaction,
-        f"✏️ Voyage n°{voyage_id} mis à jour à {format_number(gold)} pièces d'or et {format_number(emissaire)} en valeur d'émissaire et {format_number(duree)} jours en mer."
+        f"✏️ Voyage n°{voyage_id} mis à jour."
     )
     # Mise à jour du classement
     await update_ranking(interaction)
