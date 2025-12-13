@@ -24,13 +24,13 @@ async def post_voyage_embed(
     embed.add_field(
         name="Butin", 
         value=f"{voyage.get('gold'):,}".replace(',', ' ') + " pièces d'or", 
-        inline=False
+        inline=True
     )
 
     embed.add_field(
         name="Valeur d'émissaire", 
         value=f"{voyage.get('emissary_value'):,}".replace(',', ' '), 
-        inline=False
+        inline=True
     )
 
     embed.add_field(
