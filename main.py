@@ -15,6 +15,7 @@ init_db()
 # ----- IMPORT COMMANDES -----
 import slash_commands.voyages  # noqa: F401
 import slash_commands.ranking  # noqa: F401
+import slash_commands.season  # noqa: F401
 
 @bot.event
 async def setup_hook():

@@ -1,6 +1,6 @@
 import os
 import discord
-from utils.db import fetch_voyages
+from utils.db import fetch_voyages, get_active_season
 from utils.format_number import format_number
 
 
@@ -13,7 +13,7 @@ def calculate_ranking(season):
 
     for voyage in voyages:
         for uid in voyage['members']:
-            ranking[uid] += voyage.get('emissary_value', 0)
+            ranking[uid] += voyage.get('gold', 0)
 
     return dict(sorted(ranking.items(), key=lambda x: x[1], reverse=True))
 
@@ -26,14 +26,20 @@ def format_ranking(guild, ranking, season, title=None):
     for idx, (uid, amount) in enumerate(ranking.items(), start=1):
         user = guild.get_member(uid)
         name = user.display_name if user else f"<@{uid}>"
-        lines.append(f"{idx}. {name}: {format_number(amount)} valeur d'émissaire")
+        lines.append(f"{idx}. {name}: {format_number(amount)} gold")
 
     return "\n".join(lines)
 
 async def update_ranking(interaction: discord.Interaction):
-    season = interaction.channel.name
-    ranking = calculate_ranking(season)
-    message = format_ranking(interaction.guild, ranking, season)
+    # Vérifier qu'une saison est active
+    active_season = get_active_season()
+    if not active_season:
+        # Si aucune saison active, ne pas faire d'erreur mais ne rien faire
+        return
+    
+    season_name = active_season['name']
+    ranking = calculate_ranking(season_name)
+    message = format_ranking(interaction.guild, ranking, season_name)
 
     ranking_channel = interaction.guild.get_thread(int(os.getenv('RANKING_CHANNEL_ID'))) or interaction.guild.get_channel(int(os.getenv('RANKING_CHANNEL_ID')))
 
