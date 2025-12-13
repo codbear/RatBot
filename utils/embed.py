@@ -1,5 +1,5 @@
 import discord
-from datetime import datetime
+
 from utils.format_number import format_number
 
 async def post_voyage_embed(
@@ -8,8 +8,7 @@ async def post_voyage_embed(
 ):
     embed = discord.Embed(
         title=f"📜 Rapport du voyage n° {voyage.get('id')}",
-        color=discord.Color.gold(),
-        timestamp=datetime.now()
+        color=discord.Color.gold()
     )
 
     embed.add_field(
@@ -35,13 +34,7 @@ async def post_voyage_embed(
 
     embed.add_field(
         name="🪙 Butin", 
-        value=f"{format_number(voyage.get('gold'))} pièces d'or", 
-        inline=True
-    )
-
-    embed.add_field(
-        name="🏆 Valeur d'émissaire", 
-        value=format_number(voyage.get('emissary_value')), 
+        value=f"**{format_number(voyage.get('gold'))}** pièces d'or\n🏆 **{format_number(voyage.get('emissary_value'))}** émissaire",
         inline=True
     )
 

@@ -130,20 +130,20 @@ async def player_stats(interaction: discord.Interaction, membre: discord.Member 
     
     embed.add_field(
         name="🚢 Participation",
-        value=f"**{total_voyages}** voyages\n⏱️ **{total_days}** jours en mer",
+        value=f"**{total_voyages}** voyages\n**{total_days}** jours en mer",
         inline=True
     )
     
     embed.add_field(
         name="🪙 Gains totaux",
-        value=f"**{format_number(total_gold)}** or\n🏆 **{format_number(total_emissary)}** émissaire",
+        value=f"**{format_number(total_gold)}** pièces d'or\n**{format_number(total_emissary)}** émissaire",
         inline=True
     )
     
     embed.add_field(
         name="📈 Moyennes",
         value=f"🪙 **{format_number(int(avg_gold))}** or/voyage\n🏆 **{format_number(int(avg_emissary))}** émiss./voyage\n⏱️ **{avg_duration:.1f}** jours/voyage",
-        inline=True
+        inline=False
     )
     
     # Meilleur voyage
