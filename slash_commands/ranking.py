@@ -3,7 +3,7 @@ import discord
 from core.bot import tree
 from utils.db import fetch_voyages, get_active_season
 from utils.send import send_ephemeral_message
-from utils.ranking import calculate_ranking, update_ranking
+from utils.ranking import calculate_ranking, update_ranking, format_user_ranking_position
 
 rankingCmd = discord.app_commands.Group(name="classement", description="Commandes liées au classement des Rats du Large")
 
